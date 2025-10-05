@@ -16,7 +16,7 @@ type FileEntry struct {
 	Icon template.HTML
 }
 
-func CustoFileServer(root string) http.HandlerFunc {
+func DirectoryListingServer(root string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		path := filepath.Join(root, r.URL.Path)
 

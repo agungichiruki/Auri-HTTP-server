@@ -2,9 +2,6 @@ package main
 
 import (
 	"fmt"
-	"net/http"
-	"auri/handler"
-	"auri/middleware"
 	"flag"
 )
 
@@ -31,39 +28,12 @@ Example: auri`)
 	
 	flag.Parse()
 
-	addr := fmt.Sprintf(":%d", *port)
+	config := ServerConfig{
+		Port: *port,
+		Mode: *mode,
+		Root: *root,
+		Compression: *compression,
+	}
 
-	if *mode == "directory-listing" {
-		http.HandleFunc("/", handler.CustoFileServer(*root))
-	} else {
-		fs := http.FileServer(http.Dir(*root))
-		http.Handle("/", middleware.CompressionMiddleware(fs, *compression))
-	}
-	
-	fmt.Println(`
-###########################################################################################
-#  Auri HTTP Server                                                                       #
-#  a simple, lightweight, and portable HTTP server with a variety of functional features  #
-#                                                                                         #
-#  Version 0.3~Beta                                                                       #
-#  Copyright (c) 2025 Mohammad Agung                                                      #
-#  https://github.com/agung/ichiruki                                                      #
-#                                                                                         #
-#  Licensed under the BSD 3-Clause License                                                #
-#  <https://opensource.org/licenses/BSD-3-Clause>                                         #
-###########################################################################################
-
-`)
-	fmt.Printf("[info] Running on http://localhost%s\n", addr)
-	if *compression == "" {
-		fmt.Println("[info] Compression: None")
-	} else {
-		fmt.Println("[info] Compression:", *compression)
-	}
-	fmt.Println("")
-	fmt.Println("Use [ctrl + c], to shutdown Auri.")
-	err := http.ListenAndServe(addr, nil)
-	if err != nil {
-		fmt.Println("Error:", err)
-	}
+	StartServer(config)
 }
